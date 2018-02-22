@@ -2,10 +2,10 @@
 using System.Collections;
 
 public class Brick : MonoBehaviour {
-	
-	public int maxHits;
-	private int timesHit;
-	
+
+	public AudioClip crack;
+	public static int breakableCount = 0;
+	private int timesHit;	
 	public Sprite[] hitSprites;
 	private LevelManager levelManager;
 
@@ -13,6 +13,8 @@ public class Brick : MonoBehaviour {
 	void Start () {
 		timesHit = 0;
 		levelManager = GameObject.FindObjectOfType<LevelManager> ();
+		if(this.tag == "Breakable")
+			breakableCount++;
 	}
 	
 	// Update is called once per frame
@@ -22,10 +24,22 @@ public class Brick : MonoBehaviour {
 	
 	void OnCollisionEnter2D(Collision2D	collision)
 	{
+		bool isBreakable = (this.tag == "Breakable");
+		if (isBreakable) {
+			AudioSource.PlayClipAtPoint (crack, transform.position);
+			HandleHits ();
+		}
+	}
+
+	void HandleHits()
+	{
+		int maxHits = hitSprites.Length + 1;
 		timesHit++;
 		if (timesHit >= maxHits)
 		{
+			breakableCount--;
 			Destroy (gameObject);
+			levelManager.BrickDestroyed();
 		}
 		else
 		{
@@ -36,6 +50,7 @@ public class Brick : MonoBehaviour {
 	void LoadSprites()
 	{
 		int spriteIndex = timesHit - 1;
-		this.GetComponent<SpriteRenderer>().sprite = hitSprites[spriteIndex];
+		if(hitSprites[spriteIndex])
+			this.GetComponent<SpriteRenderer>().sprite = hitSprites[spriteIndex];
 	}
 }
