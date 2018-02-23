@@ -18,11 +18,6 @@ public class Brick : MonoBehaviour {
 			breakableCount++;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-
-	}
-	
 	void OnCollisionEnter2D(Collision2D	collision)
 	{
 		bool isBreakable = (this.tag == "Breakable");
@@ -40,7 +35,7 @@ public class Brick : MonoBehaviour {
 		{
 			breakableCount--;
 			Destroy (gameObject);
-			Instantiate(smoke, gameObject.transform.position, Quaternion.identity);
+			PuffSmoke();
 			levelManager.BrickDestroyed();
 		}
 		else
@@ -48,7 +43,13 @@ public class Brick : MonoBehaviour {
 			LoadSprites();
 		}
 	}
-	
+
+	void PuffSmoke()
+	{
+		GameObject smokePuff = (GameObject)Instantiate (smoke, gameObject.transform.position, Quaternion.identity);
+		smokePuff.particleSystem.startColor = gameObject.GetComponent<SpriteRenderer> ().color;
+	}
+
 	void LoadSprites()
 	{
 		int spriteIndex = timesHit - 1;
