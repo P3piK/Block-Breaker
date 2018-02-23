@@ -7,6 +7,7 @@ public class Brick : MonoBehaviour {
 	public static int breakableCount = 0;
 	private int timesHit;	
 	public Sprite[] hitSprites;
+	public GameObject smoke;
 	private LevelManager levelManager;
 
 	// Use this for initialization
@@ -39,6 +40,7 @@ public class Brick : MonoBehaviour {
 		{
 			breakableCount--;
 			Destroy (gameObject);
+			Instantiate(smoke, gameObject.transform.position, Quaternion.identity);
 			levelManager.BrickDestroyed();
 		}
 		else
@@ -52,5 +54,7 @@ public class Brick : MonoBehaviour {
 		int spriteIndex = timesHit - 1;
 		if(hitSprites[spriteIndex])
 			this.GetComponent<SpriteRenderer>().sprite = hitSprites[spriteIndex];
+		else
+			Debug.LogError("Brick sprite missing");
 	}
 }
